@@ -1,0 +1,38 @@
+package ${package}.dao.iface;
+
+import com.fiberhome.dao.iface.BaseDao;
+import java.util.Map;
+import ${package}.pojo.${tableDto.upname}PO;
+/**
+ * 
+ * 功能描述:
+ * @author $!author
+ * @date $!sysdate 
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@SuppressWarnings("unchecked")
+public interface ${tableDto.upname}Dao extends BaseDao
+{
+    /**
+     * 功能描述: 带条件查询列表
+     * @author  $!author
+     * @param start
+     * @param limit
+     * @param queryCond
+     * @param order
+     * @param lang
+     * @return
+     * @time $!sysdate 
+     */
+    public Map find${tableDto.upname}ByCon(int start, int limit, String queryCond, String order, String lang);
+    
+    /**
+     * 功能描述: 通过ID查询
+     * @author  Administrator
+     * @param id
+     * @return
+     * @time Sep 12, 20149:55:24 AM
+     */
+    public ${tableDto.upname}PO find${tableDto.upname}ById(String id);
+}

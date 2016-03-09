@@ -1,0 +1,278 @@
+/**JS
+ * @author $!author
+ * @version 1.0
+ * @class ${package}.${tableDto.upname}
+ * @date $!sysdate
+ */
+Ext.define('${package}.${tableDto.upname}',{
+
+    uses:['Com.fiberhome.view.CommonWidgets'],    
+    gridId:'',
+	    rowConfig:'',
+	    defRowConfig:'',
+	    initCond:'',
+	    needRowConfig:'',
+	    defCond:'',
+	    commWidgets:null,
+	    config:null, 
+	    addkey : '',
+	    formId : '',
+	    windowId : '',
+		
+		constructor:function(config){
+			this.addkey  = config.addkey||'';
+			this.gridId = config.gridId||config.tabparamConfig.gridId;
+			this.rowConfig = config.rowConfig||'';
+			this.defRowConfig = config.defRowConfig == undefined ?(eval(config.tabparamConfig.gridDefrowconfig)||''):eval(config.defRowConfig);// 默认数据条件
+			this.initCond = (config.initCond == undefined||config.initCond=='') ?(config.tabparamConfig.gridInitCond||'1=1'):config.initCond;
+			this.needRowConfig = config.needRowConfig||'Y';// 是否需要数据权限
+			this.defCond = this.initCond;
+
+			this.commWidgets = Ext.create('Com.fiberhome.view.CommonWidgets');
+			this.config =config;
+			
+			if(this.needRowConfig == 'Y' && this.defRowConfig != ''){
+				this.defCond = this.defCond+' and ' + this.defRowConfig;
+				if(this.rowConfig != ''){
+					this.rowConfig = "("+this.defRowConfig+" or "+this.rowConfig+")";
+				}else{
+					this.rowConfig = this.defRowConfig;
+				}
+			}
+			
+			if(this.needRowConfig == 'Y' && this.rowConfig != ''){
+				this.initCond = this.initCond+' and ' +this.rowConfig;
+			}
+			
+			if(config.windowId == undefined || config.windowId == ''){
+				if(config.tabparamConfig.windowId == null || config.tabparamConfig.windowId == undefined){
+					this.windowId = basicConstant.WIND_ID;
+				}else{
+					this.windowId = config.tabparamConfig.windowId ;
+				}
+			}else{
+				this.windowId = config.windowId;
+			}
+			
+			if(config.formId == undefined || config.formId == ''){
+				if(config.tabparamConfig.formId == null || config.tabparamConfig.formId == undefined){
+					this.formId = basicConstant.FORM_ID;
+				}else{
+					this.formId = config.tabparamConfig.formId;
+				}
+			}else{
+				this.formId = config.formId;
+			}
+			
+			
+			this.windowId = this.windowId+this.addkey;
+			this.formId = this.formId+this.addkey;
+	},
+	/**
+   	* 新增
+   	*/
+   	saveForm : function(){
+  	    var thiz =this;
+	    var config =this.config;
+		var configInitSave= {
+				url:'${tableDto.lowername}Action!saveInit.action',
+				callBack:function(returnData){
+						var formButtons = [
+								thiz.commWidgets.saveButton({
+									id:'save'+thiz.addkey,
+									formId:thiz.formId,
+									text:infoConstant.public_save,
+									handler:function() {
+										var configSave = {
+											url:'${tableDto.lowername}Action!save${tableDto.upname}.action',
+											save:'save'
+										}
+										thiz.saveCommon(configSave);
+									}
+								}),
+								thiz.commWidgets.resetButton({
+									formId:thiz.formId
+								}),
+								thiz.commWidgets.closeButtonById({
+									winId:thiz.windowId
+								})
+						];
+						var configSave = {
+							windowTile : lang == 'zh_CN' ? '新增' : 'Add',
+							tabparamConfig : thiz.config.tabparamConfig,
+							formConfig : config.formConfig,
+							formButtons:formButtons,
+							moduleGridId :thiz.gridId,
+							moduleData : returnData.model,
+							addkey : thiz.addkey,
+							formColumnNumber : 2,
+							windowWidth : document.body.offsetWidth * 0.45,
+							windowHeight : document.body.offsetHeight * 0.4
+						}
+						formBuild(configSave);						
+				}
+		};
+		ajaxRequest(configInitSave);
+   },
+   
+   /**
+    * 修改
+    */
+   modifyForm : function(){
+   		var thiz =this;
+		var config = this.config;
+		var modDelRecord = modifyDelSelRecord(thiz.gridId);//请选择一条件记录
+		if(modDelRecord != ''){
+			var configFind = {
+				url:'${tableDto.lowername}Action!find${tableDto.upname}ById.action',
+				params:{
+					modViewRecId : modDelRecord.data.id
+				},
+				callBack:function(returnData){
+					var formButtons = [
+						thiz.commWidgets.saveButton({
+						    id : 'modify'+thiz.addkey,
+							formId : thiz.formId,
+							text:infoConstant.public_save,
+							handler:function() {
+								var configSave = {
+									url:'${tableDto.lowername}Action!update${tableDto.upname}.action',
+									save:'save'
+								};
+								thiz.saveCommon(configSave);
+							}		
+						}),
+						thiz.commWidgets.resetButton({
+							formId:thiz.formId
+						}),
+						thiz.commWidgets.closeButtonById({
+							winId:thiz.windowId
+						})
+					];
+					var configModify = {
+						windowTile :lang == 'zh_CN' ? '修改' : 'Modify',
+						tabparamConfig : config.tabparamConfig,
+						formConfig : config.formConfig,
+						formButtons:formButtons,
+						moduleGridId :thiz.gridId,
+						formId : thiz.formId,
+						windowId : thiz.windowId,
+						moduleData : returnData.model,
+						formColumnNumber : 2,
+						windowWidth : document.body.offsetWidth * 0.45,
+						windowHeight : document.body.offsetHeight * 0.4
+					};
+					formBuild(configModify);								
+				}
+			};
+			ajaxRequest(configFind);
+		}
+   },
+   
+   /**
+    * 删除
+    */
+   delRecord : function(){
+   		var thiz = this;
+		var config =this.config;
+		var selRecords = getSelectRecords(thiz.gridId);
+		var ids = '';
+		if (selRecords != '') {
+			for(var i = 0;i < selRecords.length;i++){
+				ids = ids == '' ? selRecords[i].data.id : ids + "','" + selRecords[i].data.id;
+			}
+			var configDel = {
+				url : '${tableDto.lowername}Action!delete${tableDto.upname}.action',
+				params : {
+				    modViewRecIds : ids
+				},
+				callBack : function(returnData) {
+					var configCb = {
+						msg : infoConstant.public_delsuccess,
+						fn : function(confirm) {
+							if ('ok' == confirm) {
+								refreshGridList(thiz.gridId);
+							}
+						}
+					}
+					showSucMesg(configCb);
+				}
+			}
+			
+			Ext.MessageBox.confirm(infoConstant.public_info,infoConstant.public_delconfirm_info,function(btn){
+				if("yes"==btn){
+					ajaxRequest(configDel);
+				}
+			});
+		}
+   },
+   
+   /**
+    * 查看
+    */
+   viewForm : function(){
+   			var thiz = this;
+			var config = this.config;
+			var modDelRecord = modifyDelSelRecord(thiz.gridId);//请选择一条记录
+			if(modDelRecord != ''){
+				var configFind = {
+						url : '${tableDto.lowername}Action!find${tableDto.upname}ById.action',
+						params:{
+							modViewRecId : modDelRecord.get('id'),
+						},
+						callBack:function(returnData){
+							var formButtons = [
+								thiz.commWidgets.closeButtonById({
+									winId:thiz.windowId
+								})
+							];
+							var configView = {
+								windowTile : lang == 'zh_CN' ? '查看' : 'View',
+								tabparamConfig : config.tabparamConfig,
+								formConfig : config.formConfig,
+								formButtons:formButtons,
+								moduleGridId:thiz.gridId,
+								moduleData:returnData.model,
+								windowHeight : 300,
+								attachViewMode :true,
+								addkey : thiz.addkey,
+								formColumnNumber : 2,
+								windowWidth : document.body.offsetWidth * 0.45,
+								windowHeight : document.body.offsetHeight * 0.4
+							}
+							formBuild(configView);
+						}
+				}
+				ajaxRequest(configFind);
+			}		
+   },
+   
+   saveCommon : function(saveFlag) {
+		var thiz = this;
+		var configSave = {
+			formId : thiz.formId,//传入自定义formId，避免formId重复
+			url : saveFlag.url,
+			params : {
+			    moduleId : thiz.config.moduleId  //把moduleId传入供附件保存时使用
+			},
+			callBack : function(returnData) {
+				var configCb = {
+					msg : infoConstant.public_dosuccess,
+					fn : function(confirm) {
+						if ('ok' == confirm) {
+							if (saveFlag.save == 'save') {
+								refreshGridList(thiz.gridId);
+								getExtCmpById(thiz.windowId).close();
+							} else {
+								resetForm(thiz.formId);
+								refreshGridList(thiz.gridId);
+							}
+						}
+					}
+				}
+				showSucMesg(configCb);
+			}
+		}
+		submitForm(configSave);
+	}
+});

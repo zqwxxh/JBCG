@@ -1,0 +1,92 @@
+package ${package}.dao.impl;
+
+import static com.fiberhome.common.constant.Common.BUSI_LIST;
+import static com.fiberhome.common.constant.Common.TOTAL_PROPERTY;
+import static com.fiberhome.common.tools.UtilTools.isNullOrEmpty;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.fiberhome.dao.impl.BaseDaoHibImpl;
+import ${package}.dao.iface.${tableDto.upname}Dao;
+import ${package}.pojo.${tableDto.upname}PO;
+#if(${isview} == 'true')
+import ${package}.pojo.V${tableDto.upname}PO;
+#end
+
+/**
+ * 
+ * 功能描述:
+ * @author $!author
+ * @date $!sysdate 
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@SuppressWarnings("unchecked")
+public class ${tableDto.upname}DaoImpl extends BaseDaoHibImpl implements ${tableDto.upname}Dao
+{
+    /**
+     * 功能描述: 带条件查询列表
+     * 
+     * @author $!author
+     * @param start
+     * @param limit
+     * @param queryCond
+     * @param order
+     * @param lang
+     * @return
+     * @time $!sysdate 
+     */
+    public Map find${tableDto.upname}ByCon(int start, int limit, String queryCond, String order, String lang)
+    {
+#if(${isview} == 'true')
+	    String queryNewString = "from  V${tableDto.upname}PO o where 0 = 0 ";
+#else
+        String queryNewString = "from  ${tableDto.upname}PO o where 0 = 0 ";
+#end
+        
+        
+        if (!isNullOrEmpty(queryCond))
+            queryNewString += "and " + queryCond + " ";
+        
+        String countNewSql = "select count(*) " + queryNewString;
+        
+        if (!"".equals(order))
+            queryNewString += " order by " + order;
+        
+        int totalProperty = this.getRowCount(countNewSql, null);// 总记录数
+#if(${isview} == 'true')
+	    List<V${tableDto.upname}PO> limitModuleList = new ArrayList<V${tableDto.upname}PO>();
+#else
+        List<${tableDto.upname}PO> limitModuleList = new ArrayList<${tableDto.upname}PO>();
+#end
+       
+        limitModuleList = this.findByHqlWithPagination(start, limit, queryNewString, null);// 分页
+        
+        Map map = new HashMap();
+        map.put(TOTAL_PROPERTY, totalProperty);
+        map.put(BUSI_LIST, limitModuleList);
+        return map;
+    }
+    
+    /**
+     * 
+     * 重载方法
+     * @param id
+     * @return
+     */
+    public ${tableDto.upname}PO find${tableDto.upname}ById(String id)
+    {
+#if(${ispknumber} == true)
+	    ${tableDto.upname}PO ${tableDto.upname} =
+            (${tableDto.upname}PO)this.getPojoById("${package}.pojo.${tableDto.upname}PO", new Long(id));
+#else
+        ${tableDto.upname}PO ${tableDto.upname} =
+            (${tableDto.upname}PO)this.getPojoById("${package}.pojo.${tableDto.upname}PO", id);
+#end   
+       
+        return ${tableDto.upname};
+    }
+}

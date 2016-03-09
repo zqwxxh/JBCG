@@ -1,0 +1,250 @@
+package ${package}.action;
+
+import static com.fiberhome.common.constant.Common.BUSI_LIST;
+import static com.fiberhome.common.constant.Common.LANG;
+import static com.fiberhome.common.constant.Common.MANDT;
+import static com.fiberhome.common.constant.Common.TOTAL_PROPERTY;
+import static com.fiberhome.common.constant.Common.USER_CODE;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import com.fiberhome.common.tools.UtilTools;
+import javax.servlet.http.HttpServletRequest;
+import com.fiberhome.action.platform.PlatformBaseAction;
+#if(${isview} == 'true')
+import ${package}.pojo.V${tableDto.upname}PO;
+#end
+import ${package}.pojo.${tableDto.upname}PO;
+import ${package}.service.iface.${tableDto.upname}Service;
+import com.opensymphony.xwork2.ModelDriven;
+
+
+/**
+ * 
+ * 功能描述:
+ * @author $!author
+ * @date $!sysdate 
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@SuppressWarnings("serial")
+public class ${tableDto.upname}Action extends PlatformBaseAction implements ModelDriven<${tableDto.upname}PO> {
+
+	private String myFormCols;
+	private String failMesg;
+#if(${isview} == 'true')
+	private List<V${tableDto.upname}PO> ${tableDto.lowername}List;
+#else
+    private List<${tableDto.upname}PO> ${tableDto.lowername}List;
+#end
+	private int count;// 记录条数
+	private ${tableDto.upname}PO ${tableDto.lowername} = new ${tableDto.upname}PO();
+	private ${tableDto.upname}Service ${tableDto.lowername}Service;
+
+	/**
+	 * 查询所有信息
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public String find${tableDto.upname}ByCon() {
+		try {
+			String lang = (String) this.getSession().get(LANG);
+			if (null == lang) {
+				lang = "zh_CN";
+			}
+			Map map = ${tableDto.lowername}Service.find${tableDto.upname}ByCon(this.getStart(), this.getLimit(), this.getInitCond(), this.getOrder(), lang);
+#if(${isview} == 'true')
+	        if ("en_US".equals(lang)) {
+				${tableDto.lowername}List = (List<V${tableDto.upname}PO>) map.get(BUSI_LIST);
+			} else {
+				${tableDto.lowername}List = (List<V${tableDto.upname}PO>) map.get(BUSI_LIST);
+			}
+#else
+	        if ("en_US".equals(lang)) {
+				${tableDto.lowername}List = (List<${tableDto.upname}PO>) map.get(BUSI_LIST);
+			} else {
+				${tableDto.lowername}List = (List<${tableDto.upname}PO>) map.get(BUSI_LIST);
+			}
+#end
+			
+			count = (Integer) map.get(TOTAL_PROPERTY);
+		} catch (Exception e) {
+			e.printStackTrace();
+			failMesg = e.toString();
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 初始化新增
+	 */
+	public String saveInit() {
+		try {
+			HttpServletRequest request = this.getHttpServletRequest();
+			${tableDto.lowername}Service.setHttpServletRequest(request);
+			String userCode = (String) getSession().get(USER_CODE);
+			String mandt = (String) getSession().get(MANDT);
+			if (mandt == null) {
+				failMesg = "timeout";
+				return SUCCESS;
+			}
+			${tableDto.lowername}.setCdate(new Date());
+			${tableDto.lowername}.setCusername(userCode);
+		} catch (Exception e) {
+			e.printStackTrace();
+			failMesg = e.toString();
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 新增保存
+	 */
+	@SuppressWarnings("unchecked")
+	public void save${tableDto.upname}() {
+		try {
+			HttpServletRequest request = this.getHttpServletRequest();
+			${tableDto.lowername}Service.setHttpServletRequest(request);
+			String mandt = (String) getSession().get(MANDT);
+			if (mandt == null) {
+				failMesg = "timeout";
+				this.returnFailur(failMesg);
+			}
+			${tableDto.lowername}Service.save${tableDto.upname}(${tableDto.lowername});
+			this.returnSuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			failMesg = e.toString();
+			this.returnFailur(failMesg);
+		}
+	}
+
+	/**
+	 * 根据Id查询信息
+	 */
+	public String find${tableDto.upname}ById() {
+		try {
+			HttpServletRequest request = this.getHttpServletRequest();
+			${tableDto.lowername}Service.setHttpServletRequest(request);
+			String mandt = (String) getSession().get(MANDT);
+			if (mandt == null) {
+				failMesg = "timeout";
+				return SUCCESS;
+			}
+			${tableDto.lowername} = (${tableDto.upname}PO) ${tableDto.lowername}Service.find${tableDto.upname}ById(this.getModViewRecId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			failMesg = e.toString();
+		}
+		return SUCCESS;
+	}
+
+	/**
+	 * 修改
+	 */
+	@SuppressWarnings("unchecked")
+	public void update${tableDto.upname}() {
+		try {
+			HttpServletRequest request = this.getHttpServletRequest();
+			${tableDto.lowername}Service.setHttpServletRequest(request);
+			String mandt = (String) getSession().get(MANDT);
+			if (mandt == null) {
+				failMesg = "timeout";
+				this.returnFailur(failMesg);
+			}
+			if (UtilTools.isNullOrEmpty(""+${tableDto.lowername}.getId())) {
+				${tableDto.lowername}Service.save${tableDto.upname}(${tableDto.lowername});
+			} else {
+				${tableDto.lowername}Service.modify${tableDto.upname}(${tableDto.lowername});
+			}
+			this.returnSuccess();
+		} catch (Exception e) {
+			e.printStackTrace();
+			failMesg = e.toString();
+			this.returnFailur(failMesg);
+		}
+	}
+
+	/**
+	 * 删除
+	 */
+	@SuppressWarnings("unchecked")
+	public String delete${tableDto.upname}() {
+		try
+        {
+            String modViewRecIds = (String)this.getHttpServletRequest().getParameter("modViewRecIds");
+            String ids[] = modViewRecIds.split(",");
+            for (String id : ids)
+            {
+                ${tableDto.lowername}Service.delete${tableDto.upname}ById(id);
+            }
+            
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            failMesg = e.toString();
+        }
+        return SUCCESS;
+	}
+
+	public ${tableDto.upname}PO getModel() {
+		return ${tableDto.lowername};
+	}
+
+	public String getMyFormCols() {
+		return myFormCols;
+	}
+
+	public void setMyFormCols(String myFormCols) {
+		this.myFormCols = myFormCols;
+	}
+
+	public String getFailMesg() {
+		return failMesg;
+	}
+
+	public void setFailMesg(String failMesg) {
+		this.failMesg = failMesg;
+	}
+#if(${isview} == 'true')
+	public List<V${tableDto.upname}PO> get${tableDto.firstlowername}List() {
+		return ${tableDto.lowername}List;
+	}
+
+	public void set${tableDto.firstlowername}List(List<V${tableDto.upname}PO> list) {
+		this.${tableDto.lowername}List = list;
+	}
+#else
+   public List<${tableDto.upname}PO> get${tableDto.firstlowername}List() {
+		return ${tableDto.lowername}List;
+	}
+
+	public void set${tableDto.firstlowername}List(List<${tableDto.upname}PO> list) {
+		this.${tableDto.lowername}List = list;
+	}
+#end
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public ${tableDto.upname}PO get${tableDto.firstlowername}() {
+		return ${tableDto.lowername};
+	}
+
+	public void set${tableDto.firstlowername}(${tableDto.upname}PO new${tableDto.lowername}) {
+		this.${tableDto.lowername} = new${tableDto.lowername};
+	}
+
+	public void set${tableDto.firstlowername}Service(${tableDto.upname}Service new${tableDto.upname}Service) {
+		this.${tableDto.lowername}Service = new${tableDto.upname}Service;
+	}
+
+
+}

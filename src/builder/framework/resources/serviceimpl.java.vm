@@ -1,0 +1,104 @@
+package ${package}.service.impl;
+
+import java.util.Map;
+import com.fiberhome.exception.ApplicationException;
+import ${package}.dao.iface.${tableDto.upname}Dao;
+import ${package}.pojo.${tableDto.upname}PO;
+import ${package}.service.iface.${tableDto.upname}Service;
+import com.fiberhome.service.impl.BaseServiceImpl;
+
+
+/**
+ * 
+ * 功能描述:
+ * @author $!author
+ * @date $!sysdate 
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@SuppressWarnings("unchecked")
+public class ${tableDto.upname}ServiceImpl extends BaseServiceImpl implements ${tableDto.upname}Service
+{
+    private ${tableDto.upname}Dao ${tableDto.lowername}Dao;
+    
+    /**
+     * 功能描述: 查询列表
+     * @author $!author
+     * @param start
+     * @param limit
+     * @param initCond
+     * @param order
+     * @param lang
+     * @return
+     * @time $!sysdate 
+     */
+    public Map find${tableDto.upname}ByCon(int start, int limit, String initCond, String order, String lang)
+    {
+        return ${tableDto.lowername}Dao.find${tableDto.upname}ByCon(start, limit, initCond, order, lang);
+    }
+    
+    /**
+     * 功能描述: 通过ID查询
+     * @author $!author
+     * @param id
+     * @return
+     * @time $!sysdate 
+     */
+    public ${tableDto.upname}PO find${tableDto.upname}ById(String id)
+    {
+        return ${tableDto.lowername}Dao.find${tableDto.upname}ById(id);
+    }
+    
+    /**
+     * 功能描述: 保存
+     * @author $!author
+     * @param entity
+     * @throws ApplicationException
+     * @time $!sysdate 
+     */
+    public void save${tableDto.upname}(${tableDto.upname}PO entity)
+        throws ApplicationException
+    {
+        ${tableDto.lowername}Dao.save(entity);
+    }
+    
+    /**
+     * 功能描述:修改
+     * @author $!author
+     * @param entity
+     * @throws ApplicationException
+     * @time $!sysdate 
+     */
+    public void modify${tableDto.upname}(${tableDto.upname}PO entity)
+        throws ApplicationException
+    {
+        ${tableDto.lowername}Dao.update(entity);
+    }
+    
+    /**
+     * 功能描述: 删除
+     * @author $!author
+     * @param id
+     * @throws ApplicationException
+     * @time $!sysdate 
+     */
+    public void delete${tableDto.upname}ById(String id)
+        throws ApplicationException
+    {
+        ${tableDto.upname}PO ${tableDto.upname} = ${tableDto.lowername}Dao.find${tableDto.upname}ById(id);
+        ${tableDto.lowername}Dao.delete(${tableDto.upname});
+    }
+    
+
+    public ${tableDto.upname}Dao get${tableDto.firstlowername}Dao()
+    {
+        return ${tableDto.lowername}Dao;
+    }
+
+    public void set${tableDto.firstlowername}Dao(${tableDto.upname}Dao new${tableDto.lowername}Dao)
+    {
+        this.${tableDto.lowername}Dao = new${tableDto.lowername}Dao;
+    }
+    
+    
+}

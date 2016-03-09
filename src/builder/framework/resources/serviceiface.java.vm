@@ -1,0 +1,72 @@
+package ${package}.service.iface;
+
+import java.util.Map;
+
+import com.fiberhome.exception.ApplicationException;
+import ${package}.pojo.${tableDto.upname}PO;
+import com.fiberhome.service.iface.BaseService;
+
+/**
+ * 
+ * 功能描述:
+ * @author $!author
+ * @date $!sysdate 
+ * @see  [相关类/方法]
+ * @since  [产品/模块版本]
+ */
+@SuppressWarnings("unchecked")
+public interface ${tableDto.upname}Service extends BaseService
+{
+    /**
+     * 功能描述: 查询列表
+     * @author $!author
+     * @param start
+     * @param limit
+     * @param initCond
+     * @param order
+     * @param lang
+     * @return
+     * @time $!sysdate 
+     */
+    public Map find${tableDto.upname}ByCon(int start, int limit, String initCond, String order, String lang);
+    
+    /**
+     * 功能描述: 通过ID查询
+     * @author $!author
+     * @param id
+     * @return
+     * @time $!sysdate 
+     */
+    public ${tableDto.upname}PO find${tableDto.upname}ById(String id);
+    
+    /**
+     * 功能描述: 保存
+     * @author $!author
+     * @param entity
+     * @throws ApplicationException
+     * @time $!sysdate 
+     */
+    public void save${tableDto.upname}(${tableDto.upname}PO entity)
+        throws ApplicationException;
+    
+    /**
+     * 功能描述:修改
+     * @author $!author
+     * @param entity
+     * @throws ApplicationException
+     * @time $!sysdate 
+     */
+    public void modify${tableDto.upname}(${tableDto.upname}PO entity)
+        throws ApplicationException;
+    
+    /**
+     * 功能描述: 删除
+     * @author $!author
+     * @param id
+     * @throws ApplicationException
+     * @time $!sysdate 
+     */
+    public void delete${tableDto.upname}ById(String id)
+        throws ApplicationException;
+        
+}

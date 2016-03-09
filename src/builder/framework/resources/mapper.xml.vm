@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="${package}.pojo.${tableDto.upname}PO" table="${tableDto.name}" >
+        <comment>功能表</comment>
+
+#foreach($columnDto in $columnDtos)
+#if(${columnDto.ispkey} == true)
+		<id name="${columnDto.name}" type="${columnDto.javaalltype}">
+#if(${columnDto.jdbctype} == 'VARCHAR')
+	    	<column name="${columnDto.uppername}" length="32" />
+	    	<generator class="uuid.hex" />
+#else
+			<column name="${columnDto.uppername}" precision="22" scale="0" />
+	    	<generator class="native">
+	    		<param name="sequence">SEQ_XXX</param>
+	   		 </generator>
+#end
+	    </id>
+#end
+#end
+
+#foreach($columnDto in $columnDtos)
+#if(${columnDto.ispkey} != true)
+		<property name="${columnDto.name}" type="${columnDto.javaalltype}">
+	    	<column name="${columnDto.uppername}" length="${columnDto.length}">
+	    		<comment>${columnDto.comment}</comment>
+	    	</column>
+	    </property>
+#end
+#end
+    </class>
+</hibernate-mapping>
